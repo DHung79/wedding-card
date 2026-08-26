@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Thiệp Cưới</title>
+  <meta name="description" content="Thiệp cưới trực tuyến" />
+
+  <!-- Fonts (online) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Config (chỉnh sửa tại đây) -->
+  <script src="config.js"></script>
+</head>
+
+<body>
+  <!-- Cover fullscreen (phủ toàn màn hình) -->
+  <div id="cover-fullscreen" aria-hidden="true"></div>
+
+  <!-- Particle canvas -->
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- ====== INTRO ====== -->
+  <div id="intro-screen">
+    <div id="intro-card" role="button" tabindex="0" aria-label="Bấm để mở thiệp">
+      <div id="intro-names">
+        <span id="intro-groom"></span>
+        <span class="intro-amp">&amp;</span>
+        <span id="intro-bride"></span>
+      </div>
+
+      <div id="intro-hint">Bấm để mở thiệp ✦</div>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- ====== HERO ====== -->
+    <section class="hero fade-in">
+      <!-- Ghibli botanical SVG top -->
+      <svg class="deco-top" viewBox="0 0 780 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- branches & leaves -->
+        <path d="M0 60 Q60 20 130 45 Q200 70 280 35 Q360 0 440 40 Q520 75 600 40 Q670 10 780 55" stroke="#4a7c5955" stroke-width="2" fill="none"/>
+        <!-- left cluster -->
+        <ellipse cx="80"  cy="35" rx="22" ry="14" fill="#4a7c5940" transform="rotate(-20 80 35)"/>
+        <ellipse cx="60"  cy="42" rx="16" ry="10" fill="#6a9c6940" transform="rotate(-35 60 42)"/>
+        <ellipse cx="110" cy="28" rx="18" ry="11" fill="#4a7c5930" transform="rotate(15 110 28)"/>
+        <!-- middle cluster -->
+        <ellipse cx="390" cy="20" rx="24" ry="15" fill="#4a7c5935" transform="rotate(-10 390 20)"/>
+        <ellipse cx="420" cy="30" rx="16" ry="10" fill="#6a9c6935" transform="rotate(25 420 30)"/>
+        <!-- right cluster -->
+        <ellipse cx="680" cy="28" rx="22" ry="13" fill="#4a7c5940" transform="rotate(10 680 28)"/>
+        <ellipse cx="710" cy="38" rx="17" ry="10" fill="#6a9c6940" transform="rotate(-15 710 38)"/>
+        <!-- tiny flowers -->
+        <circle cx="200" cy="38" r="4" fill="#c9956a60"/>
+        <circle cx="200" cy="38" r="2" fill="#8b691460"/>
+        <circle cx="560" cy="32" r="4" fill="#c9956a60"/>
+        <circle cx="560" cy="32" r="2" fill="#8b691460"/>
+      </svg>
+
+      <p class="hero-label" id="invite-title">Trân Trọng Kính Mời</p>
+
+      <h1 class="hero-names">
+        <span id="hero-groom">Tên Chú Rể</span>
+        <span class="hero-ampersand">&amp;</span>
+        <span id="hero-bride">Tên Cô Dâu</span>
+      </h1>
+
+      <!-- Ảnh minh hoạ (custom) -->
+      <div id="hero-illustration" class="hero-illustration"></div>
+
+      <div class="hero-date-badge" id="hero-date">Ngày Cưới</div>
+    </section>
+
+    <!-- ====== QUOTE ====== -->
+    <div class="quote-block card fade-in">
+      <span class="q-marks">❝</span>
+      <span id="quote-text">...</span>
+      <span class="quote-author" id="quote-author"></span>
+    </div>
+
+    <!-- ====== LỜI MỜI ====== -->
+    <div class="card fade-in">
+      <h2 class="section-title">Lời Mời</h2>
+      <div class="divider">🌿</div>
+      <p class="invite-msg" id="invite-message"></p>
+    </div>
+
+    <!-- ====== GIA ĐÌNH ====== -->
+    <div class="card fade-in">
+      <h2 class="section-title">Gia Đình Hai Bên</h2>
+      <div class="divider">🌸</div>
+      <div class="family-grid">
+        <div class="family-side">
+          <div class="family-label">Nhà Trai</div>
+          <div class="family-member">
+            <div id="groom-father"></div>
+            <div id="groom-mother"></div>
+          </div>
+        </div>
+        <div class="family-side">
+          <div class="family-label">Nhà Gái</div>
+          <div class="family-member">
+            <div id="bride-father"></div>
+            <div id="bride-mother"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== SỰ KIỆN ====== -->
+    <div class="card fade-in">
+      <h2 class="section-title">Chương Trình</h2>
+      <div class="divider">🍃</div>
+      <div class="events-grid">
+        <!-- Lễ ăn hỏi (hidden by default, shown by JS if date set) -->
+        <div id="engagement-section" style="display:none">
+          <div class="event-box" id="event-engagement"></div>
+        </div>
+        <!-- Lễ thành hôn -->
+        <div class="event-box" id="event-wedding"></div>
+      </div>
+    </div>
+
+    <!-- ====== ĐẾM NGƯỢC ====== -->
+    <div class="card fade-in" style="text-align:center">
+      <h2 class="section-title">Còn Lại</h2>
+      <div class="divider">✨</div>
+      <div class="countdown">
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-days">--</span>
+          <span class="cd-label">Ngày</span>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-hours">--</span>
+          <span class="cd-label">Giờ</span>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-mins">--</span>
+          <span class="cd-label">Phút</span>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-secs">--</span>
+          <span class="cd-label">Giây</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== ALBUM CƯỚI (hiện khi có ảnh) ====== -->
+    <div id="album-section" class="card fade-in" style="display:none">
+      <h2 class="section-title">Album Cưới</h2>
+      <div class="divider">📷</div>
+      <div id="album-grid" class="album-grid"></div>
+    </div>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="footer fade-in">
+      <svg viewBox="0 0 780 50" width="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="margin-bottom:12px">
+        <path d="M0 30 Q100 5 200 28 Q300 50 400 22 Q500 0 600 28 Q680 48 780 20" stroke="#4a7c5940" stroke-width="1.5" fill="none"/>
+        <ellipse cx="150" cy="20" rx="14" ry="8" fill="#4a7c5930" transform="rotate(-20 150 20)"/>
+        <ellipse cx="400" cy="15" rx="16" ry="9" fill="#4a7c5930" transform="rotate(10 400 15)"/>
+        <ellipse cx="640" cy="22" rx="13" ry="8" fill="#4a7c5930" transform="rotate(-15 640 22)"/>
+        <circle cx="280" cy="30" r="3" fill="#c9956a50"/>
+        <circle cx="520" cy="12" r="3" fill="#c9956a50"/>
+      </svg>
+      <p>Cảm ơn Quý Vị đã đến chung vui cùng chúng tôi 🌿</p>
+    </footer>
+
+  </div><!-- /.page -->
+
+  <!-- Album lightbox -->
+  <div id="album-lightbox" class="album-lightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh">
+    <span class="album-lightbox-close" id="lb-close" aria-label="Đóng">&times;</span>
+    <img id="lb-img" src="" alt="Ảnh album cưới" />
+    <div class="album-lightbox-nav">
+      <button id="lb-prev" aria-label="Ảnh trước">&#8592;</button>
+      <button id="lb-next" aria-label="Ảnh kế">&#8594;</button>
+    </div>
+    <div class="album-lightbox-counter" id="lb-counter"></div>
+  </div>
+
+  <!-- App logic -->
+  <script src="app.js"></script>
+</body>
+</html>
