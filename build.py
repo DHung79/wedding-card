@@ -9,9 +9,12 @@ SRC      = os.path.join(BASE, "src")
 IMG_DIR  = os.path.join(SRC, "images")
 OUT      = os.path.join(BASE, "dist", "wedding-card.html")
 
-IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
-MIME     = {".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-            ".png": "image/png",  ".webp": "image/webp", ".gif": "image/gif"}
+IMG_EXTS  = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+MIME      = {".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+             ".png": "image/png",  ".webp": "image/webp", ".gif": "image/gif"}
+AUDIO_EXTS = {".mp3", ".ogg", ".wav", ".m4a", ".aac"}
+AUDIO_MIME = {".mp3": "audio/mpeg", ".ogg": "audio/ogg", ".wav": "audio/wav",
+              ".m4a": "audio/mp4",  ".aac": "audio/aac"}
 
 def to_data_uri(path):
     ext  = os.path.splitext(path)[1].lower()
@@ -36,6 +39,21 @@ def all_images(folder):
         os.path.join(folder, f) for f in os.listdir(folder)
         if os.path.splitext(f)[1].lower() in IMG_EXTS
     )
+
+def all_audio(folder):
+    if not os.path.isdir(folder):
+        return []
+    return sorted(
+        os.path.join(folder, f) for f in os.listdir(folder)
+        if os.path.splitext(f)[1].lower() in AUDIO_EXTS
+    )
+
+def to_audio_data_uri(path):
+    ext  = os.path.splitext(path)[1].lower()
+    mime = AUDIO_MIME.get(ext, "audio/mpeg")
+    with open(path, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode()
+    return {"src": f"data:{mime};base64,{b64}", "name": os.path.splitext(os.path.basename(path))[0]}
 
 # --- Đọc source ---
 print("▶ Đọc source files...")
@@ -85,6 +103,17 @@ for f in album_files:
 if not album_uris:
     print("   — album  : không có ảnh")
 
+print("▶ Xử lý nhạc...")
+music_files = all_audio(os.path.join(SRC, "music"))
+music_tracks = []
+for f in music_files:
+    track = to_audio_data_uri(f)
+    music_tracks.append(track)
+    size_kb = os.path.getsize(f) / 1024
+    print(f"   ✔ nhạc   : {os.path.basename(f)} ({size_kb:.0f} KB)")
+if not music_tracks:
+    print("   — nhạc   : không có (thêm file vào src/music/)")
+
 # --- Patch images block vào config.js ---
 intro_bg_js         = json.dumps(intro_bg_uri)
 cover_fullscreen_js = json.dumps(cover_fullscreen_uri)
@@ -93,6 +122,12 @@ hero_js             = json.dumps(hero_uri)
 illustration_js     = json.dumps(illustration_uri)
 petals_js = "[\n" + ",\n".join(f"    {json.dumps(u)}" for u in petal_uris)  + "\n  ]" if petal_uris  else "[]"
 album_js  = "[\n" + ",\n".join(f"    {json.dumps(u)}" for u in album_uris) + "\n  ]" if album_uris else "[]"
+
+music_js = (
+    "[\n" +
+    ",\n".join(f'    {{"src": {json.dumps(t["src"])}, "name": {json.dumps(t["name"])}}}' for t in music_tracks) +
+    "\n  ]"
+) if music_tracks else "[]"
 
 images_block = f"""  images: {{
     introBg:         {intro_bg_js},
@@ -104,10 +139,18 @@ images_block = f"""  images: {{
     album:           {album_js},
   }},"""
 
+music_block = f"  music: {music_js},"
+
 config_patched = re.sub(
     r"  // --- Ảnh.*?  images:\s*\{.*?\},",
     images_block,
     config_src,
+    flags=re.DOTALL,
+)
+config_patched = re.sub(
+    r"  // --- Nhạc.*?  music:\s*\[.*?\],",
+    music_block,
+    config_patched,
     flags=re.DOTALL,
 )
 
@@ -138,6 +181,7 @@ print("✅ Build thành công!")
 print(f"   📄 Output    : {OUT}")
 print(f"   📦 Kích thước : {size:,} bytes ({size/1024:.1f} KB)")
 print(f"   🖼  Album     : {len(album_uris)} ảnh")
+print(f"   🎵 Nhạc      : {len(music_tracks)} bài")
 print()
 print(f'   Mở để xem : open "{OUT}"')
 print("   Gửi file này trực tiếp cho người nhận — không cần hosting! 🎉")

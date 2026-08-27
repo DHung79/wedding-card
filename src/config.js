@@ -4,13 +4,13 @@
 
 const WEDDING_CONFIG = {
   // --- Thông tin cặp đôi ---
-  bride: "Nguyễn Thị Lan",
-  groom: "Trần Văn Minh",
+  bride: "Lê Thị Diệu Hiền",
+  groom: "Đào Lê Duy Hùng",
 
   // --- Ngày cưới ---
-  weddingDate: "2026-10-10",          // YYYY-MM-DD
-  weddingTime: "10:00 SA",
-  weddingDayLabel: "Thứ Bảy",         // hiển thị trên thiệp
+  weddingDate: "2026-10-11",          // YYYY-MM-DD
+  weddingTime: "10 Giờ 00",
+  weddingDayLabel: "Chủ nhật",         // hiển thị trên thiệp
 
   // --- Địa điểm ---
   venue: "Trung Tâm Tiệc Cưới Hoa Viên",
@@ -44,23 +44,26 @@ const WEDDING_CONFIG = {
     mother: "Bà Phạm Thị Mai",
   },
 
-  // --- Màu sắc & theme (Ghibli Totoro/Spirited Away) ---
+  // --- Ngày âm lịch (tuỳ chọn, hiện dưới ngày dương) ---
+  lunarDate: "(Tức ngày 2 tháng 9 năm Bính Ngọ)",
+
+  // --- Màu sắc & theme ---
   theme: {
-    primary:   "#4a7c59",   // sage green
-    secondary: "#8b6914",   // warm brown/gold
-    accent:    "#c9956a",   // terracotta
-    bg:        "#fdf6e3",   // warm cream
-    bgDark:    "#e8ddc8",   // darker cream
-    text:      "#3d2b1f",   // dark brown
-    textLight: "#7a5c44",   // medium brown
-    petal:     "#d4b896",   // petal/floral tone
+    primary:   "#47613e",   // sage green (từ mẫu chungdoi)
+    primaryDk: "#35452f",   // sage green đậm
+    accent:    "#7a9c68",   // xanh lá nhạt
+    bg:        "#f5f2ec",   // kem
+    bgCard:    "rgba(255,255,255,0.82)",
+    text:      "#35452f",
+    textLight: "#6b7f61",
+    textMuted: "#8fa385",
   },
 
   // --- Hiệu ứng ---
   effects: {
-    floatingDust: true,     // hạt bụi lấp lánh (kodama dust)
-    fallingLeaves: true,    // lá rơi
-    particleCount: 40,
+    floatingDust:  true,
+    fallingLeaves: true,
+    particleCount: 35,
   },
 
   // --- Ảnh (do build.sh tự động điền — KHÔNG chỉnh tay) ---
@@ -78,4 +81,9 @@ const WEDDING_CONFIG = {
     petals:          [],     // ảnh PNG lá/cánh hoa rơi (fallback emoji nếu trống)
     album:           [],     // mảng ảnh album cưới
   },
+
+  // --- Nhạc (do build.py tự động điền — KHÔNG chỉnh tay) ---
+  // Đặt file nhạc vào: src/music/*.mp3 (hoặc .ogg/.wav/.m4a)
+  // Playlist sẽ phát tuần tự, lặp lại khi hết danh sách
+  music: [],
 };
